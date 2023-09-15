@@ -22,12 +22,12 @@
         <div class="currencies">
           <div class="currency" v-for="(item, index) in currencies">
             <div class="cur_name_cont" @click="change_currency(index)">
-              <div class="cur_name">{{ item }}</div>
+              <div class="cur_name">{{ item.name }}</div>
             </div>
             <div class="sub_currency">
               <div
                 class="sub_cur"
-                v-for="sitem in sub_currencies[index]"
+                v-for="sitem in currencies[index].sub_currencies"
                 v-show="check_hide(index)"
               >
                 {{ sitem }}
@@ -149,22 +149,10 @@
             responseType: "stream",
           }).then((response) => {
             if (response.status == 200) {
-              console.log("hello");
-              this.currencies = JSON.parse(response.data).data[0];
-              this.sub_currencies = JSON.parse(response.data).data[1];
+              this.currencies = JSON.parse(response.data);
             }
-            // response.data.pipe(fs.createWriteStream("ada_lovelace.jpg"));
           });
-          // this.currencies = [
-          //   "Etherium",
-          //   "BTC",
-          //   "Polygon",
-          //   "Something",
-          //   "Fantom",
-          //   "Something",
-          //   "Optimism",
-          // ];
-          // this.sub_currencies = ["USDT", "BUSD", "USDT", "BUSD"];
+       
         },
       }).mount("#app");
     </script>

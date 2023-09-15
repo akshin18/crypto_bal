@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet" />
+    <title>Document</title>
+  </head>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  {% raw %}
+  <body id="app">
+    <header>
+      <div class="nav_menu">
+        <div class="profile">{{ message }}</div>
+        <div class="action"><p class="quit">Quit</p></div>
+      </div>
+    </header>
+    <container>
+      <div class="wrapper">
+        <div class="currencies">
+          <div class="currency" v-for="(item, index) in currencies">
+            <div class="cur_name_cont" @click="change_currency(index)">
+              <div class="cur_name">{{ item }}</div>
+            </div>
+            <div class="sub_currency">
+              <div
+                class="sub_cur"
+                v-for="sitem in sub_currencies[index]"
+                v-show="check_hide(index)"
+              >
+                {{ sitem }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="interact">
+          <input class="interact_item" type="text" />
+          <button @click="hello" class="interact_item" type="submit">
+            + Добавить кошелек
+          </button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th class="head_td"><p>Id</p></th>
+              <th class="head_td"><p>Address</p></th>
+              <th class="head_td"><p>Balance BNB</p></th>
+              <th class="head_td"><p>Balance stable</p></th>
+              <th class="head_td"><p>Updated</p></th>
+              <th class="head_td"><p>Edit</p></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="data_tr">
+              <td><p>id</p></td>
+              <td>
+                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+              </td>
+              <td><p>123213</p></td>
+              <td><p>0</p></td>
+              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>some</p></td>
+            </tr>
+            <tr class="data_tr">
+              <td><p>id</p></td>
+              <td>
+                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+              </td>
+              <td><p>123213</p></td>
+              <td><p>0</p></td>
+              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>some</p></td>
+            </tr>
+            <tr class="data_tr">
+              <td><p>id</p></td>
+              <td>
+                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+              </td>
+              <td><p>123213</p></td>
+              <td><p>0</p></td>
+              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>some</p></td>
+            </tr>
+            <tr class="data_tr">
+              <td><p>id</p></td>
+              <td>
+                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+              </td>
+              <td><p>123213</p></td>
+              <td><p>0</p></td>
+              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>some</p></td>
+            </tr>
+            <tr class="data_tr">
+              <td><p>id</p></td>
+              <td>
+                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+              </td>
+              <td><p>123213</p></td>
+              <td><p>0</p></td>
+              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>some</p></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </container>
+    <!-- <footer></footer> -->
+
+    <script>
+      const { createApp, ref } = Vue;
+
+      createApp({
+        setup() {
+          const message = ref("Hello vue!");
+          let currencies = ref([1, 2, 3]);
+          let sub_currencies = ref([]);
+          let sub_index = ref(0);
+
+          return {
+            message,
+            currencies,
+            sub_currencies,
+            sub_index,
+          };
+        },
+        methods: {
+          hello: function () {
+            console.log(this.currencies);
+          },
+          check_hide: function (index) {
+            if (index == this.sub_index) {
+              return true;
+            } else {
+              return false;
+            }
+            console.log(index);
+          },
+          change_currency: function (index){
+            this.sub_index = index
+          }
+        },
+        beforeCreate() {
+          axios({
+            method: "get",
+            url: "/get_currecies",
+            responseType: "stream",
+          }).then((response) => {
+            if (response.status == 200) {
+              console.log("hello");
+              this.currencies = JSON.parse(response.data).data[0];
+              this.sub_currencies = JSON.parse(response.data).data[1];
+            }
+            // response.data.pipe(fs.createWriteStream("ada_lovelace.jpg"));
+          });
+          // this.currencies = [
+          //   "Etherium",
+          //   "BTC",
+          //   "Polygon",
+          //   "Something",
+          //   "Fantom",
+          //   "Something",
+          //   "Optimism",
+          // ];
+          // this.sub_currencies = ["USDT", "BUSD", "USDT", "BUSD"];
+        },
+      }).mount("#app");
+    </script>
+  </body>
+  {% endraw %}
+</html>

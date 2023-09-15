@@ -44,6 +44,9 @@ container{
     border-radius: 5px;
     margin-top: 10px;
     margin-bottom: 10px;
+    cursor: pointer;
+    user-select:none;
+
 }
 
 .action{
@@ -54,8 +57,12 @@ container{
     color: beige;
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
 }
-
+.quit{
+    cursor: pointer;
+    user-select:none;
+}
 .wrapper{
     width: 100%;
     flex-grow: 1;
@@ -73,7 +80,7 @@ container{
 }
 
 .currency{
-    position: relative;
+    /* position: relative; */
     width: 150px;    
     height: 50px;
     margin-top: 10px;
@@ -82,6 +89,8 @@ container{
     justify-content: center;
     align-items: center;
 }
+
+
 .cur_name_cont{
     width: 150px;    
     height: 50px;
@@ -93,20 +102,25 @@ container{
     justify-content: center;
     align-items: center;
     border-radius: 5px;
-
+    user-select:none;
+    cursor: pointer;
+    
 }
 .cur_name_cont:hover{
     background-color: rgb(200, 200, 200);
+
 }
 
 
 .sub_currency{
     height: 40px;
     position: absolute;
-    top: 60px;
-    left: 0px;
+    top: 150px;
+    left: 20px;
     display: flex;
     column-gap: 20px;
+    user-select:none;
+    cursor: pointer;
 }
 
 .sub_cur{

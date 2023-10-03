@@ -21,7 +21,11 @@
       <div class="wrapper">
         <div class="currencies">
           <div class="currency" v-for="(item, index) in currencies">
-            <div class="cur_name_cont" @click="change_currency(index)">
+            <div 
+            :style="{
+              backgroundColor: focus_cur == index ? 'orange' : None,
+            }"
+            class="cur_name_cont" @click="change_currency(index)" >
               <div class="cur_name">{{ item.name }}</div>
             </div>
             <div class="sub_currency">
@@ -123,21 +127,20 @@
           let sub_currencies = ref([]);
           let sub_index = ref(0);
           let focus_sub = ref(1)
+          let focus_cur = ref(0)
 
           return {
             message,
             currencies,
             sub_currencies,
             sub_index,
-            focus_sub
+            focus_sub,
+            focus_cur
           };
         },
         methods: {
           hello: function () {
             console.log(this.currencies);
-          },
-          check_sub_focus: function(index){
-            console.log("gello");
           },
           
           add_address: function(){
@@ -169,9 +172,9 @@
             } else {
               return false;
             }
-            console.log(index);
           },
           change_currency: function (index){
+            this.focus_cur = index
             this.sub_index = index
           }
         },

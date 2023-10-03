@@ -23,7 +23,7 @@ class Addresses(Base):
     __tablename__ = "addresses"
 
     id = Column(Integer, primary_key=True, index=True,autoincrement=True)
-    address = Column(String,unique=True ,sqlite_on_conflict_unique='CASCADE',index=True)
+    address = Column(String,unique=True ,index=True)
 
 
 
@@ -35,7 +35,3 @@ class Statistic(Base):
     sub_currency_id = Column(Integer, ForeignKey("sub_currencies.id"))
     balance = Column(Double)
     updated_at = Column(DateTime)
-
-    # __table_args__ = (
-    #     UniqueConstraint('address_id', 'sub_currency_id', name='uq_address_sub_currency'),
-    # )

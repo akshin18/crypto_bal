@@ -9,7 +9,7 @@ from db import crud, models, schemas
 from db.database import SessionLocal, engine
 
 import uvicorn
-
+#0x76691696dE14216AE1810Bd25117B843029E936B
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -41,6 +41,16 @@ async def home(request: Request):
 async def get_currecies(db: Session = Depends(get_db)):
     currencies = crud.get_currencies(db)
     return currencies
+
+@app.get("/get_wallets")
+async def get_wallets(sub,db: Session = Depends(get_db)):
+    print(sub)
+    return {"data":[1,2,3,4]}
+
+@app.post("/add_address")
+async def add_address(address:schemas.Address,db: Session = Depends(get_db)):
+    crud.add_address_db(db,address)
+    return {"data":[1,2,3,4]}
 
 
 @app.post("/create_currency")

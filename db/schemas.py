@@ -32,3 +32,5 @@ class SubCurrency(BaseModel):
         orm_mode = True
 
     
+class Address(BaseModel):
+    address:str

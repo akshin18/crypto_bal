@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from . import models, schemas
 
@@ -7,7 +8,7 @@ def get_currencies(db: Session):
     currencies = db.query(models.Currencies).all()
 
     for currency in currencies:
-        sub_currencies=  [x.name for x in db.query(models.SubCurrencies).filter_by(cur_id=currency.id).all()]
+        sub_currencies=  [{"name":x.name,"id":x.id} for x in db.query(models.SubCurrencies).filter_by(cur_id=currency.id).all()]
         currency.sub_currencies = sub_currencies
 
     return currencies
@@ -42,3 +43,19 @@ def create_sub_currency(db: Session, sub_currency: schemas.CreateSubCurrency):
     db.commit()
     db.refresh(db_item)
     return db_item
+
+def add_address_db(db:Session,address: schemas.Address):
+    address_item = models.Addresses(address=address.address)
+    db.add(address_item)
+    db.commit()
+    db.refresh(address_item)
+
+    # currencies = [x.id for x in db.query(models.SubCurrencies).all()]
+    # print(currencies)
+    # now = datetime.now()
+    # for i in currencies:
+    #     db_item = models.Statistic(address_id=address_item.id,sub_currency_id=i,balance=float(0),updated_at=now)
+    #     db.add(db_item)
+    #     db.commit()
+    #     db.refresh(db_item)
+    #     print("goods")

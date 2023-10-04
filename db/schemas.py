@@ -34,7 +34,6 @@ class SubCurrency(BaseModel):
 
 class Address(BaseModel):
     address: str
-    balance: float | None
 
 
 class Statistics(BaseModel):
@@ -42,8 +41,16 @@ class Statistics(BaseModel):
     balance: int
     updated_at: datetime
     address: Address
+    native_balance: float | None
 
     @validator('address')
-    def inject_id(cls, v):
-        v.balance = v.balance if v.balance != None else 0
+    def checkother(cls, v):
+        v = v.address
         return v
+    
+
+    @validator('native_balance')
+    def inject_id(cls, v):
+        v = v if v != None else 0
+        return v
+   

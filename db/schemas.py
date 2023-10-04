@@ -17,7 +17,7 @@ class GetCurrency(BaseModel):
 
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Currency(GetCurrency):
     id: int
@@ -29,7 +29,7 @@ class SubCurrency(BaseModel):
     cur_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     
 class Address(BaseModel):

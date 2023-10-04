@@ -26,10 +26,10 @@ class Addresses(Base):
     __tablename__ = "addresses"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    balance: Mapped[float | None] = mapped_column(default=0.0)
     address: Mapped[str] = mapped_column(unique=True)
 
     statistic: Mapped["Statistic"] = relationship(back_populates="address")
-
 
 
 class Statistic(Base):
@@ -39,6 +39,6 @@ class Statistic(Base):
     address_id: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
     sub_currency_id: Mapped[int] = mapped_column(ForeignKey("sub_currencies.id"))
     balance: Mapped[float]
-    updated_at: Mapped[datetime]
+    updated_at: Mapped[datetime] = mapped_column(onupdate=datetime.now)
 
     address: Mapped["Addresses"] = relationship(back_populates="statistic")

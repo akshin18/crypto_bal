@@ -34,6 +34,7 @@ class SubCurrency(BaseModel):
 
 class Address(BaseModel):
     address: str
+    balance: float | None
 
 
 class Statistics(BaseModel):
@@ -44,5 +45,5 @@ class Statistics(BaseModel):
 
     @validator('address')
     def inject_id(cls, v):
-        v = v.address
+        v.balance = v.balance if v.balance != None else 0
         return v

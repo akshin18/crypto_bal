@@ -54,61 +54,21 @@
             <tr>
               <th class="head_td"><p>Id</p></th>
               <th class="head_td"><p>Address</p></th>
-              <th class="head_td"><p>Balance BNB</p></th>
+              <th class="head_td"><p>Balance native</p></th>
               <th class="head_td"><p>Balance stable</p></th>
               <th class="head_td"><p>Updated</p></th>
               <th class="head_td"><p>Edit</p></th>
             </tr>
           </thead>
           <tbody>
-            <tr class="data_tr">
-              <td><p>id</p></td>
+            <tr class="data_tr" v-for="item in show_table">
+              <td><p>{{item.id}}</p></td>
               <td>
-                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
+                <a href="#"><p>{{item.address.address}}</p></a>
               </td>
-              <td><p>123213</p></td>
-              <td><p>0</p></td>
-              <td><p>27.07.2023 в 23:47</p></td>
-              <td><p>some</p></td>
-            </tr>
-            <tr class="data_tr">
-              <td><p>id</p></td>
-              <td>
-                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
-              </td>
-              <td><p>123213</p></td>
-              <td><p>0</p></td>
-              <td><p>27.07.2023 в 23:47</p></td>
-              <td><p>some</p></td>
-            </tr>
-            <tr class="data_tr">
-              <td><p>id</p></td>
-              <td>
-                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
-              </td>
-              <td><p>123213</p></td>
-              <td><p>0</p></td>
-              <td><p>27.07.2023 в 23:47</p></td>
-              <td><p>some</p></td>
-            </tr>
-            <tr class="data_tr">
-              <td><p>id</p></td>
-              <td>
-                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
-              </td>
-              <td><p>123213</p></td>
-              <td><p>0</p></td>
-              <td><p>27.07.2023 в 23:47</p></td>
-              <td><p>some</p></td>
-            </tr>
-            <tr class="data_tr">
-              <td><p>id</p></td>
-              <td>
-                <a href="#"><p>somedatdfsdfdsfsdfa</p></a>
-              </td>
-              <td><p>123213</p></td>
-              <td><p>0</p></td>
-              <td><p>27.07.2023 в 23:47</p></td>
+              <td><p>{{item.address.balance}}</p></td>
+              <td><p>{{item.balance}}</p></td>
+              <td><p>{{item.updated_at}}</p></td>
               <td><p>some</p></td>
             </tr>
           </tbody>
@@ -126,8 +86,9 @@
           let currencies = ref([1, 2, 3]);
           let sub_currencies = ref([]);
           let sub_index = ref(0);
-          let focus_sub = ref(1)
-          let focus_cur = ref(0)
+          let focus_sub = ref(1);
+          let focus_cur = ref(0);
+          let show_table = ref([]);
 
           return {
             message,
@@ -135,7 +96,8 @@
             sub_currencies,
             sub_index,
             focus_sub,
-            focus_cur
+            focus_cur,
+            show_table
           };
         },
         methods: {
@@ -162,6 +124,7 @@
           }).then((response) => {
             if (response.status == 200) {
               console.log(response.data)
+              this.show_table = JSON.parse(response.data)
               // this.currencies = JSON.parse(response.data);
             }
           });
@@ -178,6 +141,10 @@
             this.sub_index = index
           }
         },
+        mounted(){
+          this.change_focus(1);
+        }
+        ,
         beforeCreate() {
           axios({
             method: "get",
@@ -188,6 +155,9 @@
               this.currencies = JSON.parse(response.data);
             }
           });
+          
+          
+          
        
         },
       }).mount("#app");

@@ -1,6 +1,6 @@
-from typing import List
-from pydantic import BaseModel
-
+from pydantic import BaseModel, validator
+from datetime import datetime
+from db import models
 
 class CreateCurrency(BaseModel):
     name: str
@@ -15,13 +15,13 @@ class GetCurrency(BaseModel):
     name: str
     sub_currencies: list
 
-
     class Config:
         from_attributes = True
 
+
 class Currency(GetCurrency):
     id: int
-    
+
 
 class SubCurrency(BaseModel):
     id: int
@@ -31,6 +31,18 @@ class SubCurrency(BaseModel):
     class Config:
         from_attributes = True
 
-    
+
 class Address(BaseModel):
-    address:str
+    address: str
+
+
+class Statistics(BaseModel):
+    id: int
+    balance: int
+    updated_at: datetime
+    address: Address
+
+    @validator('address')
+    def inject_id(cls, v):
+        v = v.address
+        return v

@@ -42,10 +42,10 @@ async def get_currecies(db: Session = Depends(get_db)):
     currencies = crud.get_currencies(db)
     return currencies
 
-@app.get("/get_wallets")
+@app.get("/get_wallets", response_model=list[schemas.Statistics])
 async def get_wallets(sub,db: Session = Depends(get_db)):
-    print(sub)
-    return {"data":[1,2,3,4]}
+    data = crud.get_wallets(sub, db)
+    return data
 
 @app.post("/add_address")
 async def add_address(address:schemas.Address,db: Session = Depends(get_db)):

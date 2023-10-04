@@ -50,12 +50,16 @@ def add_address_db(db:Session,address: schemas.Address):
     db.commit()
     db.refresh(address_item)
 
-    # currencies = [x.id for x in db.query(models.SubCurrencies).all()]
-    # print(currencies)
-    # now = datetime.now()
-    # for i in currencies:
-    #     db_item = models.Statistic(address_id=address_item.id,sub_currency_id=i,balance=float(0),updated_at=now)
-    #     db.add(db_item)
-    #     db.commit()
-    #     db.refresh(db_item)
-    #     print("goods")
+    currencies = [x.id for x in db.query(models.SubCurrencies).all()]
+    print(currencies)
+    now = datetime.now()
+    for i in currencies:
+        db_item = models.Statistic(address_id=address_item.id,sub_currency_id=i,balance=float(0),updated_at=now)
+        db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+
+
+def get_wallets(sub, db:Session):
+    data = db.query(models.Statistic).filter_by(sub_currency_id=sub).all()
+    return data

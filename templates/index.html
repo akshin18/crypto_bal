@@ -13,24 +13,26 @@
   <body id="app">
     <header>
       <div class="nav_menu">
-        <div class="profile">{{ message }}</div>
-        <div class="action"><p class="quit">Quit</p></div>
+        <div class="profile" @click="quit_csv()">Add data</div>
+        <div class="action" @click="quit()"><p class="quit">Quit</p></div>
       </div>
     </header>
     <container>
       <div class="wrapper">
         <div class="currencies">
           <div class="currency" v-for="(item, index) in currencies">
-            <div 
-            :style="{
+            <div
+              :style="{
               backgroundColor: focus_cur == index ? 'orange' : None,
             }"
-            class="cur_name_cont" @click="change_currency(index)" >
+              class="cur_name_cont"
+              @click="change_currency(index)"
+            >
               <div class="cur_name">{{ item.name }}</div>
             </div>
             <div class="sub_currency">
               <div
-              :style="{
+                :style="{
                 backgroundColor: focus_sub == s_item.id ? 'orange' : 'white',
               }"
                 class="sub_cur"
@@ -75,7 +77,27 @@
         </table>
       </div>
     </container>
-    <!-- <footer></footer> -->
+    <div
+      class="add_csv_background"
+      @click="quit_csv()"
+      v-if="quit_cs_value"
+    ></div>
+    <div class="add_csv" v-if="quit_cs_value">
+      <div class="container_csv">
+        <h2>Upload a File</h2>
+        <div class="file-input">
+          <input
+            type="file"
+            id="file"
+            accept=".csv"
+            ref="csv_file"
+            @change="handleFileChange"
+          />
+          <label for="file">Choose File</label>
+        </div>
+        <button id="send-button" @click="send_file()">Send</button>
+      </div>
+    </div>
 
     <script>
       const { createApp, ref } = Vue;
@@ -89,7 +111,8 @@
           let focus_sub = ref(1);
           let focus_cur = ref(0);
           let show_table = ref([]);
-
+          let quit_cs_value = ref(false);
+          let selectedFile = ref();
           return {
             message,
             currencies,
@@ -97,54 +120,78 @@
             sub_index,
             focus_sub,
             focus_cur,
-            show_table
+            show_table,
+            quit_cs_value,
+            selectedFile,
           };
         },
         methods: {
           hello: function () {
             console.log(this.currencies);
           },
-          
-          add_address: function(){
+          quit: function () {
+            document.cookie = `auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            document.location.reload();
+          },
+
+          quit_csv: function () {
+            this.quit_cs_value = !this.quit_cs_value;
+          },
+
+          add_address: function () {
             let address = this.$refs.inputField.value;
-            axios.post('add_address',{address: address}).then((response) => {
-            if (response.status == 200) {
-              console.log("Good")
-              // this.currencies = JSON.parse(response.data);
-            }
-          });
+            axios.post("add_address", { address: address }).then((response) => {
+              if (response.status == 200) {
+                console.log("Good");
+              }
+            });
           },
-          
-          change_focus: function (index){
-            this.focus_sub = index
+
+          change_focus: function (index) {
+            this.focus_sub = index;
             axios({
-            method: "get",
-            url: `/get_wallets?sub=${index}`,
-            responseType: "stream",
-          }).then((response) => {
-            if (response.status == 200) {
-              console.log(response.data)
-              this.show_table = JSON.parse(response.data)
-              // this.currencies = JSON.parse(response.data);
-            }
-          });
+              method: "get",
+              url: `/get_wallets?sub=${index}`,
+              responseType: "stream",
+            }).then((response) => {
+              if (response.status == 200) {
+                console.log(response.data);
+                this.show_table = JSON.parse(response.data);
+                // this.currencies = JSON.parse(response.data);
+              }
+            });
           },
-          check_hide: function (index,event) {
+          check_hide: function (index, event) {
             if (index == this.sub_index) {
               return true;
             } else {
               return false;
             }
           },
-          change_currency: function (index){
-            this.focus_cur = index
-            this.sub_index = index
-          }
+          change_currency: function (index) {
+            this.focus_cur = index;
+            this.sub_index = index;
+          },
+          send_file: function () {
+            this.quit_csv();
+            const formData = new FormData();
+            formData.append("data", this.selectedFile);
+            axios.post("add_file", formData).then((response) => {
+              if (response.status == 200) {
+                console.log("Good");
+            
+            }
+          })
+
+
+          },
+          handleFileChange: function (event) {
+            this.selectedFile = event.target.files[0];
+          },
         },
-        mounted(){
+        mounted() {
           this.change_focus(1);
-        }
-        ,
+        },
         beforeCreate() {
           axios({
             method: "get",
@@ -155,10 +202,6 @@
               this.currencies = JSON.parse(response.data);
             }
           });
-          
-          
-          
-       
         },
       }).mount("#app");
     </script>

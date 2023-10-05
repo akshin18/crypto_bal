@@ -40,7 +40,7 @@ class Statistics(BaseModel):
     id: int
     balance: int
     updated_at: datetime
-    address: Address
+    address: Address | str
     native_balance: float | None
 
     @validator('address')

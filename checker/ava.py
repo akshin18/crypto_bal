@@ -23,6 +23,9 @@ class AvalancheChecker:
 
         self.usdc_contract_address = Web3.to_checksum_address("0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E")
         self.usdc_contract = self.w3.eth.contract(address=self.usdc_contract_address, abi=self.usd_abi)
+
+        self.avax_contract_address = Web3.to_checksum_address("0xB57B60DeBDB0b8172bb6316a9164bd3C695F133a")
+        self.avax_contract = self.w3.eth.contract(address=self.avax_contract_address, abi=self.usd_abi)
         
     
     def check_usdt(self,address):

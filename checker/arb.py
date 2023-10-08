@@ -24,6 +24,8 @@ class ArbitumChecker:
         self.usdc_contract_address = Web3.to_checksum_address("0xaf88d065e77c8cC2239327C5EDb3A432268e5831")
         self.usdc_contract = self.w3.eth.contract(address=self.usdc_contract_address, abi=self.usd_abi)
         
+        
+        
     
     def check_usdt(self,address):
         ethereum_address = Web3.to_checksum_address(address)

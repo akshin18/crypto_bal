@@ -69,7 +69,13 @@ def get_wallets(sub, db: Session):
 
 
 def check_and_update_balances(db_sql):
+    data_dict = {}
     for db in db_sql:
         data = db.query(models.Addresses).all()
-        print(data[0])
-        print(data[0].statistic)
+        for x in data:
+            for zi,i in enumerate(x.statistic):
+                if zi in data_dict:
+                    data_dict[zi].append(i)
+                else:
+                    data_dict.update({zi:[i]})
+    print(data_dict.keys())

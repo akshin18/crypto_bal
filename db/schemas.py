@@ -13,7 +13,7 @@ class CreateSubCurrency(BaseModel):
 
 class GetCurrency(BaseModel):
     name: str
-    sub_currencies: list
+    sub_currencies: list[dict]
 
     class Config:
         from_attributes = True

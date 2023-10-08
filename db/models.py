@@ -28,14 +28,14 @@ class Addresses(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     address: Mapped[str] = mapped_column(unique=True)
 
-    statistic: Mapped["Statistic"] = relationship(back_populates="address")
+    statistic: Mapped[list["Statistic"]] = relationship(back_populates="address",cascade="all, delete-orphan", uselist=True)
 
 
 class Statistic(Base):
     __tablename__ = "statistic"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    address_id: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
+    address_id: Mapped[int] = mapped_column(ForeignKey("addresses.id", ondelete="CASCADE"))
     sub_currency_id: Mapped[int] = mapped_column(ForeignKey("sub_currencies.id"))
     balance: Mapped[float]
     native_balance: Mapped[float | None] = mapped_column(default=0.0)

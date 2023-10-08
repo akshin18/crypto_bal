@@ -1,13 +1,19 @@
-from fastapi import FastAPI, Request, Form
+from threading import Thread as th
+from datetime import datetime, timedelta
+from time import sleep
+
+from fastapi import FastAPI, Request, Form, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 import shutil
+
 
 from sqlalchemy.orm import Session
 from db import crud, models, schemas
 from db.database import SessionLocal, engine
+from func import add_address_to_db
 
 import uvicorn
 #0x76691696dE14216AE1810Bd25117B843029E936B
@@ -26,6 +32,14 @@ def get_db():
         yield db
     finally:
         db.close()
+        
+        
+def add_csv_to_db(csv_name,db):
+    add_address_to_db(csv_name,db)
+
+def write_log(message: str):
+    with open("log.txt", mode="a") as log:
+        log.write(message)
 
 
 @app.get("/ping")
@@ -73,10 +87,10 @@ async def add_address(address:schemas.Address,db: Session = Depends(get_db)):
     return {"data":[1,2,3,4]}
 
 @app.post("/add_file")
-async def add_file(data= Form(...)):
+async def add_file(background_tasks: BackgroundTasks,data= Form(...), db: Session = Depends(get_db)):
     with open("data.csv", "wb") as f:
         shutil.copyfileobj(data.file, f)
-
+    background_tasks.add_task(add_csv_to_db,"data.csv",db)
     return {"status":"ok"}
 
 
@@ -92,8 +106,6 @@ async def create_sub_currency(sub_currency:schemas.CreateSubCurrency, db: Sessio
     return {"status":"Successfully"}
 
 
-
-
 @app.middleware("http")
 async def middleware(request: Request, call_next):
     response = await call_next(request)
@@ -102,7 +114,19 @@ async def middleware(request: Request, call_next):
         return RedirectResponse("/login_page")
     return response
 
+@app.on_event("startup")
+def some_task():
+    print("strted")
+    targ = datetime.now() + timedelta(days=1)
+    crud.check_and_update_balances(get_db())
 
-
+    while True:
+        now = datetime.now()
+        if now > targ:
+            targ = now + timedelta(days=1)
+            crud.check_and_update_balances(get_db())
+        sleep(10)
+        
 if __name__ == "__main__":
+    
     uvicorn.run("main:app", reload=True)

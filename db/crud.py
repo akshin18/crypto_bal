@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
+import copy
+
+from checker.checker import Checker
 
 from . import models, schemas,database
 
@@ -58,7 +61,7 @@ def add_address_db(db:Session,address: schemas.Address):
             db_item = models.Statistic(address_id=address_item.id,sub_currency_id=i,balance=float(0),updated_at=now)
             db.add(db_item)
         db.commit()
-        db.refresh(db_item)
+        # db.refresh(db_item)
     except Exception as e:
         db.rollback()
 
@@ -73,9 +76,75 @@ def check_and_update_balances(db_sql):
     for db in db_sql:
         data = db.query(models.Addresses).all()
         for x in data:
-            for zi,i in enumerate(x.statistic):
+            for zi,i in enumerate(copy.deepcopy(x.statistic)):
                 if zi in data_dict:
                     data_dict[zi].append(i)
                 else:
                     data_dict.update({zi:[i]})
-    print(data_dict.keys())
+    distribution_currencies(data_dict)
+
+
+def distribution_currencies(data_dict: dict):
+    checker = Checker()
+    checker.check_all()
+    for i in data_dict:
+        if i == 0:
+            #usdt Etherium
+            checker.eth_c.add_addresses(1,data_dict[i])
+            ...
+        elif i == 1:
+            #usdc Etherium
+            checker.eth_c.add_addresses(2,data_dict[i])
+            ...
+        elif i == 2:
+            #usdc BSC
+            checker.bsc_c.add_addresses(2,data_dict[i])
+            ...
+        elif i == 3:
+            #busd BSC
+            checker.bsc_c.add_addresses(1,data_dict[i])
+            ...
+        elif i == 4:
+            #usdc Optimism
+            checker.opt_c.add_addresses(2,data_dict[i])
+            ...
+            
+        elif i == 5:
+            #usdt Optimism
+            checker.opt_c.add_addresses(1,data_dict[i])
+            ...
+            
+        elif i == 6:
+            #usdt Arbitrum
+            checker.arb_c.add_addresses(1,data_dict[i])
+            ...
+           
+        elif i == 7:
+            #usdc Arbitrum
+            checker.arb_c.add_addresses(2,data_dict[i])
+            ...
+           
+        elif i == 8:
+             #tusd Fantom
+            checker.fan_c.add_addresses(1,data_dict[i])
+            ...
+            
+        elif i == 9:
+            #usdt Avalanche
+            checker.ava_c.add_addresses(1,data_dict[i])
+            ...
+            
+        elif i == 10:
+            #usdt Polygon
+            checker.pol_c.add_addresses(1,data_dict[i])
+            ...
+           
+        elif i == 11:
+             #usdc Polygon
+            checker.pol_c.add_addresses(2,data_dict[i])
+            ...
+            
+        elif i == 12:
+            #usdc Avalanche
+            checker.ava_c.add_addresses(2,data_dict[i])
+            ...

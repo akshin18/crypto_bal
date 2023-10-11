@@ -13,6 +13,7 @@ import shutil
 from sqlalchemy.orm import Session
 from db import crud, models, schemas
 from db.database import SessionLocal, engine
+from db.db_commit import get_db
 from func import add_address_to_db
 
 import uvicorn
@@ -25,13 +26,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
         
         
 def add_csv_to_db(csv_name,db):
@@ -50,8 +45,10 @@ async def ping():
 @app.get("/login_page")
 async def login_get(request: Request):
     return templates.TemplateResponse("login.html", context={"request": request})
+
+
 @app.post("/login_page")
-async def login_get(request: Request):
+async def check_login_post(request: Request):
     return templates.TemplateResponse("login.html", context={"request": request})
 
 
@@ -66,8 +63,9 @@ async def login_post(request: Request,username: str = Form(...), password: str =
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", context={"request": request})
+
 @app.post("/", response_class=HTMLResponse)
-async def home(request: Request):
+async def post_home(request: Request):
     return templates.TemplateResponse("index.html", context={"request": request})
 
 
@@ -114,7 +112,7 @@ async def middleware(request: Request, call_next):
         return RedirectResponse("/login_page")
     return response
 
-@app.on_event("startup")
+
 def some_task():
     print("strted")
     targ = datetime.now() + timedelta(days=1)
@@ -128,5 +126,5 @@ def some_task():
         sleep(10)
         
 if __name__ == "__main__":
-    
+    th(target=some_task).start()
     uvicorn.run("main:app", reload=True)

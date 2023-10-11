@@ -1,6 +1,7 @@
 from web3 import Web3
 import json
-
+from db.db_commit import StatiscticCommit
+import time
 
 
 
@@ -16,14 +17,18 @@ class EtherChecker:
         self.name = "eth"
         self.node_url = node_url
         self.w3 = Web3(Web3.HTTPProvider(self.node_url))
-        self.usd_abi = json.loads(open("abis/usd_abi.json","r").read())
+        self.usd_abi = json.loads(open("checker/abis/usd_abi.json","r").read())
 
         self.usdt_contract_address = Web3.to_checksum_address("0xdac17f958d2ee523a2206206994597c13d831ec7")
         self.usdt_contract = self.w3.eth.contract(address=self.usdt_contract_address, abi=self.usd_abi)
 
         self.usdc_contract_address = Web3.to_checksum_address("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
         self.usdc_contract = self.w3.eth.contract(address=self.usdc_contract_address, abi=self.usd_abi)
+        self.addresses = {}
         
+    
+    def add_addresses(self,position,addresses):
+        self.addresses.update({position:addresses})
     
     def check_usdt(self,address):
         try:
@@ -44,12 +49,39 @@ class EtherChecker:
         except:
             return self.check_usdc(address)
 
-    def _check_all(self,address):
-        data = {
-            "usdt":self.check_usdt(address),
-            "usdc":self.check_usdc(address),
-        }
-        return data
+    def _check_all(self):
+        if self.addresses == {}:
+            print("go to the rest")
+            time.sleep(5)
+        else:
+            res = all([self.addresses[x] == [] for x in self.addresses])
+            if res:
+                print("empty now")
+                StatiscticCommit.commit()
+                return False
+            
+            for i in self.addresses:
+                # print("go addres check")
+                if i == 1:
+                    try:
+                        statistic = self.addresses[i].pop()
+                        # print(statistic.address.address,"My address")
+                        balance = self.check_usdt(statistic.address.address)
+                        # print("balance 1:",balance)
+                        StatiscticCommit.update(statistic,balance)
+                    except Exception as e:
+                        print(e)
+                if i == 2:
+                    try:
+                        statistic = self.addresses[i].pop()
+                        # print(statistic.address.address,"My address")
+                        balance = self.check_usdc(statistic.address.address)
+                        # print("balance 2:",balance)
+                        StatiscticCommit.update(statistic,balance)
+                    except Exception as e:
+                        print(e)
+                    
+        return True
 
 
 
